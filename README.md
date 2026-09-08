@@ -50,6 +50,7 @@ npm start          # → http://127.0.0.1:8080
 | その日の目標台数を変える | カード下部の「目標 2 〜 3 台」 |
 | 会場・搬入時間などを残す | カード下部のメモ欄 |
 | 日程を増やす / 減らす | 「＋ 日程を追加」/ カード下部の「日程を削除」 |
+| 出店要項を確認する | ヘッダーの「📄 出店要項」（Google スライドが別タブで開きます） |
 | 一覧を Excel で見る | ヘッダーの「CSV」 |
 | 更新履歴に名前を残す | ヘッダーの「担当者」 |
 
@@ -77,7 +78,7 @@ npm start          # → http://127.0.0.1:8080
 
 ```
 index.html                 画面（1ページ）
-assets/config.js           Supabase の URL と publishable key
+assets/config.js           Supabase の URL / publishable key / 出店要項の URL
 assets/app.js              アプリ本体（依存なしの素の JS）
 assets/styles.css          スタイル（ライト / ダーク自動切替）
 assets/vendor/             supabase-js を同梱（CDN 依存なし）
@@ -112,3 +113,11 @@ npm test
 
 より厳しく制限したい場合は、Supabase Auth でログインを必須にし、`schema.sql` の
 ポリシーを `to authenticated` に変更してください。
+
+---
+
+## 出店要項リンクの差し替え
+
+ヘッダーの「📄 出店要項」の遷移先は `assets/config.js` の `guidelinesUrl` です。
+資料を差し替えたときはここだけ書き換えてください（空文字にするとボタンが消えます）。
+リンク先の Google スライドは、共有相手にも閲覧権限が必要です。

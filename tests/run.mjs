@@ -47,10 +47,12 @@ const step = async (name, fn) => {
   catch (e) { failures += 1; console.log('  \u2717 ' + name + ' -> ' + e.message.split('\n')[0]); }
 };
 
-function stubConfig(page, base) {
+const DOC_URL = 'https://docs.google.com/presentation/d/TEST_DECK/edit';
+
+function stubConfig(page, base, extra = `guidelinesUrl:'${DOC_URL}',`) {
   return page.route('**/assets/config.js', (route) => route.fulfill({
     contentType: 'text/javascript',
-    body: `window.KC_CONFIG={supabaseUrl:'${base}',supabaseKey:'test-key'};`,
+    body: `window.KC_CONFIG={supabaseUrl:'${base}',supabaseKey:'test-key',${extra}};`,
   }));
 }
 
@@ -200,6 +202,14 @@ async function runAppTests(base) {
     if (s !== 'polling' && s !== 'live') throw new Error('sync=' + s);
   });
 
+  await step('出店要項ボタンが要項URLへ遷移する', async () => {
+    const link = p.locator('#link-guidelines');
+    if (!(await link.isVisible())) throw new Error('ボタンが表示されない');
+    if ((await link.getAttribute('href')) !== DOC_URL) throw new Error('href=' + await link.getAttribute('href'));
+    if ((await link.getAttribute('target')) !== '_blank') throw new Error('新しいタブで開かない');
+    if (!(await link.getAttribute('rel')).includes('noopener')) throw new Error('rel が不足');
+  });
+
   await step('JS エラーが出ていない', async () => {
     const real = logs.filter((l) => !/WebSocket|realtime/i.test(l));
     if (real.length) throw new Error(real.join(' | '));
@@ -238,6 +248,19 @@ async function runSetupTests(base) {
     if (await p.locator('.card').count()) throw new Error('カードが表示されている');
     if (await p.locator('#toolbar').isVisible()) throw new Error('ツールバーが表示されている');
   });
+  await step('テーブル未作成でも出店要項は開ける', async () => {
+    if (!(await p.locator('#link-guidelines').isVisible())) throw new Error('ボタンが表示されない');
+  });
+
+  // guidelinesUrl 未設定ならボタンを出さない
+  const p2 = await b.newPage({ viewport: { width: 900, height: 600 } });
+  await stubConfig(p2, base, '');
+  await p2.goto(`${base}/index.html`, { waitUntil: 'domcontentloaded' });
+  await p2.waitForSelector('.card', { timeout: 15000 });
+  await step('要項URL未設定ならボタンを隠す', async () => {
+    if (await p2.locator('#link-guidelines').isVisible()) throw new Error('ボタンが残っている');
+  });
+
   await b.close();
 }
 

@@ -2,6 +2,15 @@
    キッチンカー出店調整アプリ
    Supabase（kc_events / kc_entries）と同期する 1 ページアプリ
    ============================================================ */
+// 出店要項リンク（Supabase の状態に関係なく常に使えるよう先に設定する）
+(() => {
+  const link = document.getElementById('link-guidelines');
+  const url = window.KC_CONFIG?.guidelinesUrl;
+  if (!link || !url) return;
+  link.href = url;
+  link.hidden = false;
+})();
+
 // supabase-js は assets/vendor に同梱（CDN 依存なしで動きます）
 if (!window.supabase?.createClient) {
   document.getElementById('notice-host').innerHTML =

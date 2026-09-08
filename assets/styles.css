@@ -146,6 +146,17 @@ button, input, select, textarea {
 .btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
 .btn-ghost:hover { background: var(--panel); color: var(--text); }
 .btn-sm { padding: 3px 9px; font-size: 12px; border-radius: 7px; }
+a.btn { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
+.btn-doc {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line-strong));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.btn-doc:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--accent-soft));
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .btn-block { width: 100%; }
 .btn-dashed {
   border-style: dashed;
