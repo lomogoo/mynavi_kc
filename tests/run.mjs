@@ -72,6 +72,19 @@ async function runAppTests(base) {
     const n = await p.locator('.card').count();
     if (n !== 7) throw new Error(`cards=${n}`);
   });
+  await step('10/18・10/24 の目標は 4〜5台', async () => {
+    for (const [i, label] of [[3, '10/18'], [4, '10/24']]) {
+      const card = p.locator('.card').nth(i);
+      if (!(await card.innerText()).includes(label)) throw new Error(`${i}枚目が${label}でない`);
+      const t = await card.locator('.count').innerText();
+      if (t !== '0 / 4〜5台') throw new Error(`${label}: ${t}`);
+      if ((await card.locator('.dots i').count()) !== 5) throw new Error(`${label}: ドット数が5でない`);
+    }
+  });
+  await step('ヘッダーに目標台数の合計が出る', async () => {
+    const t = await p.locator('#brand-sub').innerText();
+    if (t !== '全7日程 / 目標 計18〜25台') throw new Error(t);
+  });
   await step('サマリーの集計', async () => {
     const t = (await p.locator('#summary').innerText()).replace(/\n/g, ' ');
     if (!/出店決定 1台/.test(t) || !/声かけ中 1台/.test(t)) throw new Error(t);

@@ -68,6 +68,7 @@ const el = {
   toasts: document.getElementById('toast-host'),
   vendorList: document.getElementById('vendor-suggest'),
   genreList: document.getElementById('genre-suggest'),
+  brandSub: document.getElementById('brand-sub'),
   btnMe: document.getElementById('btn-me'),
   btnCsv: document.getElementById('btn-csv'),
   btnReload: document.getElementById('btn-reload'),
@@ -351,6 +352,7 @@ function render() {
   renderAddDate();
   renderBoard();
   renderSuggestions();
+  renderBrandSub();
   el.btnMe.textContent = state.me ? `担当: ${state.me}` : '担当者';
 
   restoreDom(snap);
@@ -400,6 +402,14 @@ async function loadSchemaSql() {
   } catch {
     box.textContent = 'リポジトリの supabase/schema.sql をコピーして SQL Editor で実行してください。';
   }
+}
+
+/** ヘッダー副題（日程数と目標台数の合計）は日程ごとの目標から組み立てる */
+function renderBrandSub() {
+  if (!el.brandSub || !state.events.length) return;
+  const min = state.events.reduce((n, ev) => n + (ev.target_min ?? 0), 0);
+  const max = state.events.reduce((n, ev) => n + (ev.target_max ?? 0), 0);
+  el.brandSub.textContent = `全${state.events.length}日程 / 目標 計${min === max ? min : `${min}〜${max}`}台`;
 }
 
 function renderSummary() {
